@@ -1,6 +1,6 @@
-// Tipos gerados manualmente a partir das migrations.
-// Em produção, você pode regenerar com:
-//   npx supabase gen types typescript --project-id <id> > types/database.ts
+// Tipos do banco Supabase.
+// Mantidos em um único objeto "Row" para simplicidade — usamos `any` em inserts
+// no client, e a validação é feita via Zod nos server actions.
 
 export type Json =
   | string
@@ -21,14 +21,8 @@ export type Database = {
           is_admin: boolean;
           created_at: string;
         };
-        Insert: {
-          id: string;
-          email: string;
-          full_name?: string | null;
-          is_admin?: boolean;
-          created_at?: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
+        Insert: any;
+        Update: any;
       };
       settings: {
         Row: {
@@ -45,11 +39,8 @@ export type Database = {
           youtube_url: string | null;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["settings"]["Row"],
-          "updated_at"
-        > & { updated_at?: string };
-        Update: Partial<Database["public"]["Tables"]["settings"]["Insert"]>;
+        Insert: any;
+        Update: any;
       };
       services: {
         Row: {
@@ -63,11 +54,8 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["services"]["Row"],
-          "id" | "created_at" | "updated_at"
-        > & { id?: string; created_at?: string; updated_at?: string };
-        Update: Partial<Database["public"]["Tables"]["services"]["Insert"]>;
+        Insert: any;
+        Update: any;
       };
       combos: {
         Row: {
@@ -85,16 +73,13 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["combos"]["Row"],
-          "id" | "created_at" | "updated_at"
-        > & { id?: string; created_at?: string; updated_at?: string };
-        Update: Partial<Database["public"]["Tables"]["combos"]["Insert"]>;
+        Insert: any;
+        Update: any;
       };
       combo_services: {
         Row: { combo_id: string; service_id: string };
-        Insert: { combo_id: string; service_id: string };
-        Update: Partial<Database["public"]["Tables"]["combo_services"]["Insert"]>;
+        Insert: any;
+        Update: any;
       };
       portfolio_items: {
         Row: {
@@ -110,11 +95,8 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["portfolio_items"]["Row"],
-          "id" | "created_at" | "updated_at"
-        > & { id?: string; created_at?: string; updated_at?: string };
-        Update: Partial<Database["public"]["Tables"]["portfolio_items"]["Insert"]>;
+        Insert: any;
+        Update: any;
       };
       testimonials: {
         Row: {
@@ -129,11 +111,8 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["testimonials"]["Row"],
-          "id" | "created_at" | "updated_at"
-        > & { id?: string; created_at?: string; updated_at?: string };
-        Update: Partial<Database["public"]["Tables"]["testimonials"]["Insert"]>;
+        Insert: any;
+        Update: any;
       };
       faqs: {
         Row: {
@@ -145,11 +124,8 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["faqs"]["Row"],
-          "id" | "created_at" | "updated_at"
-        > & { id?: string; created_at?: string; updated_at?: string };
-        Update: Partial<Database["public"]["Tables"]["faqs"]["Insert"]>;
+        Insert: any;
+        Update: any;
       };
       how_it_works_steps: {
         Row: {
@@ -163,13 +139,8 @@ export type Database = {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["how_it_works_steps"]["Row"],
-          "id" | "created_at" | "updated_at"
-        > & { id?: string; created_at?: string; updated_at?: string };
-        Update: Partial<
-          Database["public"]["Tables"]["how_it_works_steps"]["Insert"]
-        >;
+        Insert: any;
+        Update: any;
       };
     };
     Functions: {
