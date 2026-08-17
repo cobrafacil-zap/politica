@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { loginSchema } from "@/lib/validation/auth";
 import { redirect } from "next/navigation";
 
@@ -21,10 +22,26 @@ export async function signIn(formData: FormData) {
     return { error: "E-mail ou senha inválidos." };
   }
 
-  // Garante que o profile existe (caso seja o primeiro login)
-  await supabase
+  // Garante que o profile existe e promove a admin se for o primeiro.
+  // Usa o service_role (bypassa RLS) porque o profile ainda pode estar faltando.
+  const admin = createAdminClient();
+  const { data: anyAdmin } = await admin
     .from("profiles")
-    .upsert({ id: data.user.id, email: data.user.email ?? "" }, { onConflict: "id" });
+    .select("id")
+    .eq("is_admin", true)
+    .limit(1)
+    .maybeSingle();
+
+  const shouldPromote = !anyAdmin;
+
+  await admin.from("profiles").upsert(
+    {
+      id: data.user.id,
+      email: data.user.email ?? "",
+      is_admin: shouldPromote ? true : undefined,
+    },
+    { onConflict: "id" }
+  );
 
   // redirect() throw NÃO retorna — os cookies de sessão já foram
   // commitados via cookies() do next/headers dentro do setAll.
