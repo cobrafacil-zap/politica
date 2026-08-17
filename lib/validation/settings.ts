@@ -19,6 +19,7 @@ export const settingsSchema = z.object({
   hero_title: z.string().max(200).optional().nullable(),
   hero_subtitle: z.string().max(400).optional().nullable(),
   hero_cta_label: z.string().max(60).optional().nullable(),
+  hero_image_url: urlOptional,
   about_text: z.string().max(2000).optional().nullable(),
   contact_email: z
     .string()
@@ -29,6 +30,9 @@ export const settingsSchema = z.object({
   instagram_url: urlOptional,
   facebook_url: urlOptional,
   youtube_url: urlOptional,
+  stats_campaigns: z.string().max(20).optional().nullable(),
+  stats_states: z.string().max(20).optional().nullable(),
+  stats_satisfaction: z.string().max(20).optional().nullable(),
 });
 
 export type SettingsInput = z.infer<typeof settingsSchema>;

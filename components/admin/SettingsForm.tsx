@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { updateSettings } from "@/app/admin/configuracoes/actions";
 import { toast } from "sonner";
 
@@ -14,16 +15,21 @@ type Initial = {
   hero_title?: string | null;
   hero_subtitle?: string | null;
   hero_cta_label?: string | null;
+  hero_image_url?: string | null;
   about_text?: string | null;
   contact_email?: string | null;
   instagram_url?: string | null;
   facebook_url?: string | null;
   youtube_url?: string | null;
+  stats_campaigns?: string | null;
+  stats_states?: string | null;
+  stats_satisfaction?: string | null;
 };
 
 export function SettingsForm({ initial }: { initial: Initial }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [heroImageUrl, setHeroImageUrl] = useState(initial.hero_image_url ?? "");
 
   const handleSubmit = (formData: FormData) => {
     setError(null);
@@ -97,6 +103,43 @@ export function SettingsForm({ initial }: { initial: Initial }) {
               name="hero_cta_label"
               defaultValue={initial.hero_cta_label ?? "Falar no WhatsApp"}
             />
+          </div>
+
+          <ImageUploadField
+            value={heroImageUrl}
+            onChange={setHeroImageUrl}
+            label="Imagem do Hero (opcional)"
+          />
+          <input type="hidden" name="hero_image_url" value={heroImageUrl} />
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="stats_campaigns">Estatística: Campanhas</Label>
+              <Input
+                id="stats_campaigns"
+                name="stats_campaigns"
+                defaultValue={initial.stats_campaigns ?? "200+"}
+                placeholder="200+"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="stats_states">Estatística: Estados</Label>
+              <Input
+                id="stats_states"
+                name="stats_states"
+                defaultValue={initial.stats_states ?? "12"}
+                placeholder="12"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="stats_satisfaction">Estatística: Satisfação</Label>
+              <Input
+                id="stats_satisfaction"
+                name="stats_satisfaction"
+                defaultValue={initial.stats_satisfaction ?? "98%"}
+                placeholder="98%"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">

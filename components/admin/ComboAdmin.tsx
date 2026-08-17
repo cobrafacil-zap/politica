@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { createCombo, updateCombo, deleteCombo } from "@/app/admin/combos/actions";
 import { formatBRL } from "@/lib/format";
@@ -17,6 +18,7 @@ type Combo = {
   name: string;
   slug: string;
   description: string | null;
+  image_url: string | null;
   price_cents: number;
   original_price_cents: number | null;
   whatsapp_message: string;
@@ -172,6 +174,7 @@ function ComboDialog({
   const [priceReais, setPriceReais] = useState(
     combo?.price_cents != null ? (combo.price_cents / 100).toFixed(2).replace(".", ",") : ""
   );
+  const [imageUrl, setImageUrl] = useState(combo?.image_url ?? "");
 
   const toggle = (id: string) => {
     setSelected((prev) => {
@@ -209,6 +212,13 @@ function ComboDialog({
               className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
           </div>
+
+          <ImageUploadField
+            value={imageUrl}
+            onChange={setImageUrl}
+            label="Imagem de capa"
+          />
+          <input type="hidden" name="image_url" value={imageUrl} />
 
           <div className="grid gap-3 md:grid-cols-3">
             <div className="space-y-1">

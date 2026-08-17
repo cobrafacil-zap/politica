@@ -9,6 +9,10 @@ export type Settings = {
   hero_title: string | null;
   hero_subtitle: string | null;
   hero_cta_label: string | null;
+  hero_image_url: string | null;
+  stats_campaigns: string | null;
+  stats_states: string | null;
+  stats_satisfaction: string | null;
   about_text: string | null;
   contact_email: string | null;
   instagram_url: string | null;
@@ -22,6 +26,7 @@ export type Service = {
   slug: string;
   description: string | null;
   icon: string | null;
+  image_url: string | null;
   display_order: number;
   active: boolean;
   price_cents: number;
@@ -33,6 +38,7 @@ export type Combo = {
   name: string;
   slug: string;
   description: string | null;
+  image_url: string | null;
   price_cents: number;
   original_price_cents: number | null;
   whatsapp_message: string;
@@ -79,6 +85,7 @@ export type Step = {
   title: string;
   description: string;
   icon: string | null;
+  image_url: string | null;
   display_order: number;
   active: boolean;
 };

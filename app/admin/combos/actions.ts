@@ -10,6 +10,7 @@ function parseForm(formData: FormData) {
     name: formData.get("name"),
     slug: formData.get("slug"),
     description: formData.get("description") || null,
+    image_url: formData.get("image_url") || null,
     price_cents: formData.get("price_cents") || 0,
     original_price_cents: formData.get("original_price_cents") || null,
     whatsapp_message: formData.get("whatsapp_message"),

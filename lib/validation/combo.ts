@@ -8,6 +8,13 @@ export const comboSchema = z.object({
     .max(80)
     .regex(/^[a-z0-9-]+$/, "Use apenas letras minúsculas, números e hífens"),
   description: z.string().max(500).optional().nullable(),
+  image_url: z
+    .string()
+    .max(500)
+    .url()
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => (v ? v : null)),
   price_cents: z.coerce.number().int().min(0),
   original_price_cents: z.coerce.number().int().min(0).optional().nullable(),
   whatsapp_message: z.string().min(5, "Mensagem muito curta").max(800),

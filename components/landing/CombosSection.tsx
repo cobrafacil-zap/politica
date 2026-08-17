@@ -10,21 +10,29 @@ export function CombosSection({ combos }: Props) {
   if (!combos.length) return null;
 
   return (
-    <section id="combos" className="bg-muted/40 py-20">
+    <section
+      id="combos"
+      className="relative overflow-hidden py-20 md:py-28"
+    >
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/8 via-background to-amber-500/8"
+      />
+
       <div className="container">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5 rounded-full border-2 border-foreground bg-background px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-foreground">
             <Package className="h-3 w-3" /> Combos prontos
           </span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
-            Ou escolha um combo com desconto
+          <h2 className="mt-4 font-display text-4xl font-black tracking-tighter md:text-6xl">
+            Pacotes montados<br />pros momentos-chave.
           </h2>
-          <p className="mt-3 text-muted-foreground">
-            Pacotes montados para os momentos mais comuns de campanha. Mais barato que a soma dos avulsos.
+          <p className="mt-4 text-lg text-muted-foreground">
+            Mais barato que a soma dos avulsos. Pensa como estratégia, não como gasto.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
           {combos.map((combo) => (
             <ComboCard key={combo.id} combo={combo} />
           ))}

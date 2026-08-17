@@ -1,5 +1,6 @@
 import { getLandingData } from "@/lib/supabase/queries";
 import { Hero } from "@/components/landing/Hero";
+import { TrustBar } from "@/components/landing/TrustBar";
 import { ServicesMenu } from "@/components/landing/ServicesMenu";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { PortfolioGrid } from "@/components/landing/PortfolioGrid";
@@ -28,6 +29,13 @@ export default async function LandingPage() {
         ctaLabel={data.settings.hero_cta_label ?? "Falar no WhatsApp"}
         whatsappNumber={whatsappNumber}
         companyName={companyName}
+        heroImageUrl={data.settings.hero_image_url}
+      />
+
+      <TrustBar
+        campaigns={data.settings.stats_campaigns}
+        states={data.settings.stats_states}
+        satisfaction={data.settings.stats_satisfaction}
       />
 
       <ServicesMenu services={data.services} />

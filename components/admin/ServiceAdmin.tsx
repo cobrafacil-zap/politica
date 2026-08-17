@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -18,6 +19,7 @@ type Service = {
   slug: string;
   description: string | null;
   icon: string | null;
+  image_url: string | null;
   display_order: number;
   active: boolean;
   price_cents: number;
@@ -131,6 +133,7 @@ function ServiceDialog({
   const [priceReais, setPriceReais] = useState(
     service?.price_cents != null ? (service.price_cents / 100).toFixed(2).replace(".", ",") : ""
   );
+  const [imageUrl, setImageUrl] = useState(service?.image_url ?? "");
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -159,6 +162,13 @@ function ServiceDialog({
               className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
           </div>
+
+          <ImageUploadField
+            value={imageUrl}
+            onChange={setImageUrl}
+            label="Imagem de capa"
+          />
+          <input type="hidden" name="image_url" value={imageUrl} />
 
           <div className="grid gap-3 md:grid-cols-3">
             <div className="space-y-1">

@@ -1,4 +1,5 @@
-import { ArrowRight, Sparkles, MessageCircle, ChevronDown } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, Megaphone } from "lucide-react";
 import { WhatsAppButton } from "@/components/landing/WhatsAppButton";
 
 type Props = {
@@ -7,67 +8,120 @@ type Props = {
   ctaLabel: string;
   whatsappNumber: string | null;
   companyName: string;
+  heroImageUrl: string | null;
 };
 
-export function Hero({ title, subtitle, ctaLabel, whatsappNumber, companyName }: Props) {
+const AUDIENCE = [
+  "Prefeitos",
+  "Vereadores",
+  "Deputados",
+  "Governadores",
+  "Candidatos a qualquer cargo",
+];
+
+export function Hero({
+  title,
+  subtitle,
+  ctaLabel,
+  whatsappNumber,
+  companyName,
+  heroImageUrl,
+}: Props) {
   return (
-    <section className="relative overflow-hidden">
-      {/* Fundo decorativo */}
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-background to-primary/5"
-      />
-      <div
-        aria-hidden
-        className="absolute -top-24 left-1/2 -z-10 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-primary/20 blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="absolute right-0 top-1/3 -z-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl"
-      />
+    <section className="relative overflow-hidden bg-foreground text-background">
+      {heroImageUrl && (
+        <div className="absolute inset-0 -z-10">
+          <Image
+            src={heroImageUrl}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-40"
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/85 to-foreground/40"
+          />
+        </div>
+      )}
 
-      <div className="container flex min-h-[80vh] flex-col items-center justify-center gap-6 py-24 text-center">
-        <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/80 px-3 py-1.5 text-xs font-medium text-foreground shadow-sm backdrop-blur">
-          <Sparkles className="h-3 w-3 text-primary" />
-          Marketing político que gera resultado
-        </span>
+      <div className="container relative grid items-center gap-12 py-20 md:grid-cols-2 md:py-28">
+        <div className="space-y-6">
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary">
+            <Megaphone className="h-3 w-3" />
+            Eleições 2026
+          </span>
 
-        <h1 className="max-w-4xl text-balance font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
-          {title}
-        </h1>
+          <h1 className="font-display text-5xl font-black leading-[0.95] tracking-tighter md:text-7xl lg:text-8xl">
+            {title}
+          </h1>
 
-        <p className="max-w-2xl text-balance text-lg text-muted-foreground md:text-xl">
-          {subtitle}
-        </p>
+          <p className="max-w-xl text-lg text-background/80 md:text-xl">
+            {subtitle}
+          </p>
 
-        <div className="mt-2 flex flex-col items-center gap-3 sm:flex-row">
-          <WhatsAppButton
-            number={whatsappNumber}
-            message={`Olá! Quero saber mais sobre os serviços da ${companyName}.`}
-            size="lg"
-            aria-label={ctaLabel}
-            className="group h-12 px-6 text-base shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
-          >
-            {ctaLabel}
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </WhatsAppButton>
-          <a
-            href="#servicos"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-input bg-background/60 px-6 text-base font-medium backdrop-blur transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            <MessageCircle className="h-4 w-4 text-primary" />
-            Ver cardápio
-          </a>
+          <div className="flex flex-col items-start gap-3 pt-2 sm:flex-row">
+            <WhatsAppButton
+              number={whatsappNumber}
+              message={`Olá! Quero montar minha campanha com a ${companyName}.`}
+              size="lg"
+              aria-label={ctaLabel}
+              className="group h-14 px-8 text-base font-bold uppercase tracking-wide shadow-2xl shadow-primary/40 transition-all hover:scale-[1.02] hover:shadow-primary/60"
+            >
+              {ctaLabel}
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </WhatsAppButton>
+            <a
+              href="#servicos"
+              className="inline-flex h-14 items-center text-base font-semibold text-background/90 underline-offset-4 hover:underline"
+            >
+              Ver cardápio de serviços ↓
+            </a>
+          </div>
         </div>
 
-        <a
-          href="#servicos"
-          aria-label="Rolar para o cardápio"
-          className="mt-8 inline-flex animate-bounce text-muted-foreground/60 hover:text-foreground"
-        >
-          <ChevronDown className="h-6 w-6" />
-        </a>
+        {heroImageUrl ? null : (
+          <div className="relative hidden h-[480px] overflow-hidden rounded-3xl border border-background/10 bg-gradient-to-br from-primary/30 via-foreground to-foreground shadow-2xl md:block">
+            <div className="absolute inset-0 grid place-items-center">
+              <Megaphone className="h-32 w-32 text-primary/40" aria-hidden />
+            </div>
+            <div
+              aria-hidden
+              className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-foreground to-transparent"
+            />
+            <div className="absolute bottom-6 left-6 right-6 rounded-2xl border border-background/20 bg-foreground/60 p-5 backdrop-blur">
+              <p className="font-display text-2xl font-bold text-primary">
+                Sua campanha começa aqui.
+              </p>
+              <p className="mt-1 text-sm text-background/80">
+                Estratégia, conteúdo e tráfego — tudo num lugar só.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
+
+      <div
+        aria-hidden
+        className="relative border-y border-primary/30 bg-primary/15 py-3"
+      >
+        <div className="flex animate-[marquee_30s_linear_infinite] gap-12 whitespace-nowrap font-display text-sm font-bold uppercase tracking-widest text-primary">
+          {[...AUDIENCE, ...AUDIENCE].map((item, i) => (
+            <span key={i} className="flex items-center gap-12">
+              {item}
+              <span className="text-primary/40">★</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes marquee {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+      `}</style>
     </section>
   );
 }

@@ -1,9 +1,8 @@
 "use client";
 
-import { Sparkles, Check } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from "next/image";
+import { ArrowRight, Check, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { formatBRL } from "@/lib/format";
 import { useCart } from "@/components/landing/CartProvider";
 import type { Combo, Service } from "@/lib/supabase/queries";
@@ -18,95 +17,115 @@ export function ComboCard({ combo }: Props) {
 
   const itemsTotal = combo.services.reduce((acc, s) => acc + s.price_cents, 0);
   const hasDiscount =
-    itemsTotal > 0 &&
-    combo.price_cents < itemsTotal;
+    itemsTotal > 0 && combo.price_cents < itemsTotal;
   const discountPct = hasDiscount
     ? Math.round(((itemsTotal - combo.price_cents) / itemsTotal) * 100)
     : 0;
 
   const handlePickCombo = () => {
     setMany(combo.services.map((s) => s.id));
-    // Rola até a sacola
     setTimeout(() => {
-      document
-        .getElementById("cart-anchor")
-        ?.scrollIntoView({ behavior: "smooth", block: "end" });
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }, 50);
   };
 
   return (
-    <Card
+    <article
       className={cn(
-        "relative flex h-full flex-col overflow-hidden transition-all duration-200",
-        "hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/10",
-        combo.featured &&
-          "border-primary/50 shadow-lg shadow-primary/10 ring-1 ring-primary/30"
+        "group relative flex h-full flex-col overflow-hidden rounded-3xl border-2 bg-card transition-all duration-300",
+        "hover:-translate-y-1 hover:shadow-2xl",
+        combo.featured
+          ? "border-foreground shadow-2xl ring-4 ring-primary/20"
+          : "border-border"
       )}
     >
-      {combo.badge_text && (
-        <Badge className="absolute left-1/2 top-0 -translate-x-1/2 rounded-b-md rounded-t-none px-3 py-1 text-xs">
-          {combo.badge_text}
-        </Badge>
-      )}
-      <CardHeader className={combo.badge_text ? "pt-8" : ""}>
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-2xl">{combo.name}</CardTitle>
-          {combo.featured && (
-            <Sparkles className="h-5 w-5 shrink-0 text-primary" aria-hidden />
+      <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+        {combo.image_url ? (
+          <Image
+            src={combo.image_url}
+            alt={combo.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/30 to-foreground/30">
+            <Sparkles className="h-16 w-16 text-foreground/40" aria-hidden />
+          </div>
+        )}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent"
+        />
+
+        {combo.badge_text && (
+          <Badge className="absolute left-4 top-4 rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary-foreground shadow-lg">
+            {combo.badge_text}
+          </Badge>
+        )}
+
+        {hasDiscount && (
+          <Badge className="absolute right-4 top-4 rounded-full bg-foreground px-3 py-1 text-xs font-bold uppercase tracking-wider text-background shadow-lg">
+            -{discountPct}%
+          </Badge>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col gap-5 p-6">
+        <div>
+          <h3 className="font-display text-2xl font-black tracking-tight md:text-3xl">
+            {combo.name}
+          </h3>
+          {combo.description && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              {combo.description}
+            </p>
           )}
         </div>
-        {combo.description && (
-          <p className="mt-2 text-sm text-muted-foreground">{combo.description}</p>
-        )}
-        <div className="mt-4 flex items-baseline gap-2">
-          <span className="text-4xl font-bold tracking-tight">
+
+        <div className="flex items-baseline gap-3">
+          <span className="font-display text-4xl font-black tracking-tighter md:text-5xl">
             {formatBRL(combo.price_cents)}
           </span>
           {hasDiscount && (
-            <div className="flex flex-col">
-              <span className="text-sm text-muted-foreground line-through">
-                {formatBRL(itemsTotal)}
-              </span>
-              <span className="text-xs font-semibold text-primary">
-                Economize {discountPct}%
-              </span>
-            </div>
+            <span className="text-base text-muted-foreground line-through">
+              {formatBRL(itemsTotal)}
+            </span>
           )}
         </div>
-      </CardHeader>
-      <CardContent className="flex flex-1 flex-col">
+
         {combo.services.length > 0 && (
-          <ul className="mb-6 space-y-2 text-sm">
+          <ul className="flex flex-wrap gap-1.5">
             {combo.services.map((s) => (
-              <li key={s.id} className="flex items-start gap-2">
+              <li
+                key={s.id}
+                className="inline-flex items-center gap-1.5 rounded-full border bg-background px-2.5 py-1 text-xs font-medium"
+              >
                 <Check
-                  className="mt-0.5 h-4 w-4 shrink-0 text-primary"
+                  className="h-3 w-3 text-primary"
                   aria-hidden
                 />
-                <span className="flex-1">{s.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {formatBRL(s.price_cents)}
-                </span>
+                {s.name}
               </li>
             ))}
           </ul>
         )}
-        <div className="mt-auto">
-          <Button
-            type="button"
-            onClick={handlePickCombo}
-            className="w-full"
-            size="lg"
-            variant={combo.featured ? "default" : "outline"}
-            aria-label={`Selecionar combo ${combo.name}`}
-          >
-            Quero esse combo
-          </Button>
-          <p className="mt-2 text-center text-xs text-muted-foreground">
-            Adiciona os serviços à sacola — finalize no WhatsApp quando quiser
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+
+        <button
+          type="button"
+          onClick={handlePickCombo}
+          className={cn(
+            "group/btn mt-auto flex h-14 w-full items-center justify-center gap-2 rounded-2xl text-base font-bold uppercase tracking-wider transition-all hover:scale-[1.02]",
+            combo.featured
+              ? "bg-foreground text-background shadow-xl shadow-foreground/30 hover:bg-primary hover:text-primary-foreground"
+              : "border-2 border-foreground bg-background text-foreground hover:bg-foreground hover:text-background"
+          )}
+          aria-label={`Selecionar combo ${combo.name}`}
+        >
+          Quero esse combo
+          <ArrowRight className="h-5 w-5 transition-transform group-hover/btn:translate-x-1" />
+        </button>
+      </div>
+    </article>
   );
 }

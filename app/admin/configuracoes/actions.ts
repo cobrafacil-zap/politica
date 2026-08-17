@@ -12,11 +12,15 @@ export async function updateSettings(formData: FormData) {
     hero_title: formData.get("hero_title") || null,
     hero_subtitle: formData.get("hero_subtitle") || null,
     hero_cta_label: formData.get("hero_cta_label") || null,
+    hero_image_url: formData.get("hero_image_url") || null,
     about_text: formData.get("about_text") || null,
     contact_email: formData.get("contact_email") || null,
     instagram_url: formData.get("instagram_url") || null,
     facebook_url: formData.get("facebook_url") || null,
     youtube_url: formData.get("youtube_url") || null,
+    stats_campaigns: formData.get("stats_campaigns") || null,
+    stats_states: formData.get("stats_states") || null,
+    stats_satisfaction: formData.get("stats_satisfaction") || null,
   });
   const { error } = await supabase
     .from("settings")
