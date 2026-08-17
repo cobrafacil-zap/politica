@@ -24,6 +24,8 @@ export type Service = {
   icon: string | null;
   display_order: number;
   active: boolean;
+  price_cents: number;
+  selectable: boolean;
 };
 
 export type Combo = {

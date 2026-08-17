@@ -2,7 +2,6 @@
 
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
-import { MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Props = Omit<ButtonProps, "asChild"> & {
@@ -29,11 +28,11 @@ export function WhatsAppButton({
     return (
       <span
         className={cn(
-          "inline-flex h-10 items-center rounded-md border border-dashed px-4 text-xs text-muted-foreground",
+          "inline-flex h-10 items-center rounded-md border border-dashed border-amber-500/40 bg-amber-50 px-4 text-xs text-amber-900 dark:bg-amber-900/20 dark:text-amber-200",
           className
         )}
       >
-        Configure o WhatsApp em /admin/configuracoes
+        WhatsApp não configurado
       </span>
     );
   }
@@ -46,8 +45,7 @@ export function WhatsAppButton({
         rel="noopener noreferrer"
         aria-label="Abrir conversa no WhatsApp"
       >
-        <MessageCircle className="h-4 w-4" aria-hidden />
-        {children ?? "Falar no WhatsApp"}
+        {children}
       </a>
     </Button>
   );

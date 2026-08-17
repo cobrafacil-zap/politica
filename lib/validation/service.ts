@@ -9,6 +9,8 @@ export const serviceSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Use apenas letras minúsculas, números e hífens"),
   description: z.string().max(500).optional().nullable(),
   icon: z.string().max(40).optional().nullable(),
+  price_cents: z.coerce.number().int().min(0),
+  selectable: z.coerce.boolean().default(true),
   display_order: z.coerce.number().int().min(0).default(0),
   active: z.coerce.boolean().default(true),
 });

@@ -11,6 +11,8 @@ export async function createService(formData: FormData) {
     slug: formData.get("slug"),
     description: formData.get("description") || null,
     icon: formData.get("icon") || null,
+    price_cents: formData.get("price_cents") || 0,
+    selectable: formData.get("selectable") === "on" || formData.get("selectable") === "true",
     display_order: formData.get("display_order") || 0,
     active: formData.get("active") === "on" || formData.get("active") === "true",
   });
@@ -28,6 +30,8 @@ export async function updateService(id: string, formData: FormData) {
     slug: formData.get("slug"),
     description: formData.get("description") || null,
     icon: formData.get("icon") || null,
+    price_cents: formData.get("price_cents") || 0,
+    selectable: formData.get("selectable") === "on" || formData.get("selectable") === "true",
     display_order: formData.get("display_order") || 0,
     active: formData.get("active") === "on" || formData.get("active") === "true",
   });
