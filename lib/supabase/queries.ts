@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export type Settings = {
   id: number;
@@ -91,7 +92,9 @@ export type LandingData = {
 };
 
 async function fetchLandingData(): Promise<LandingData> {
-  const supabase = createClient();
+  // Usa o cliente admin (service_role) para não tocar em cookies.
+  // RLS já filtra apenas dados públicos (active = true) nas queries.
+  const supabase = createAdminClient();
 
   const [settingsRes, servicesRes, combosRes, comboServicesRes, portfolioRes, testimonialsRes, faqsRes, stepsRes] =
     await Promise.all([
