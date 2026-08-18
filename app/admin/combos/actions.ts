@@ -2,11 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { assertAdmin, revalidateLanding } from "@/lib/supabase/admin-guard";
-import { comboSchema } from "@/lib/validation/combo";
+import { comboSchema, type ComboInput } from "@/lib/validation/combo";
 
-function parseForm(formData: FormData) {
+function parseForm(formData: FormData): ComboInput {
   const serviceIds = formData.getAll("service_ids").map(String);
-  return comboSchema.parse({
+  const result = comboSchema.safeParse({
     name: formData.get("name"),
     slug: formData.get("slug"),
     description: formData.get("description") || null,
@@ -20,11 +20,25 @@ function parseForm(formData: FormData) {
     badge_text: formData.get("badge_text") || null,
     service_ids: serviceIds,
   });
+  if (!result.success) {
+    const first = result.error.issues[0];
+    throw new Error(
+      `Campo "${first.path.join(".") || "?"}" invalido: ${first.message}`
+    );
+  }
+  return result.data;
 }
 
 export async function createCombo(formData: FormData) {
   const { supabase } = await assertAdmin();
-  const { service_ids, ...data } = parseForm(formData);
+  let data: Omit<ComboInput, "service_ids">;
+  let service_ids: string[];
+  try {
+    const parsed = parseForm(formData);
+    ({ service_ids, ...data } = parsed);
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Dados invalidos" };
+  }
   const { data: combo, error } = await supabase
     .from("combos")
     .insert(data)
@@ -48,7 +62,14 @@ export async function createCombo(formData: FormData) {
 
 export async function updateCombo(id: string, formData: FormData) {
   const { supabase } = await assertAdmin();
-  const { service_ids, ...data } = parseForm(formData);
+  let data: Omit<ComboInput, "service_ids">;
+  let service_ids: string[];
+  try {
+    const parsed = parseForm(formData);
+    ({ service_ids, ...data } = parsed);
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Dados invalidos" };
+  }
 
   const { error } = await supabase.from("combos").update(data).eq("id", id);
   if (error) return { error: error.message };
