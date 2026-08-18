@@ -19,16 +19,28 @@ function parseServiceIds(formData: FormData): string[] {
   return formData.getAll("service_ids").map(String);
 }
 
+function parseNumOrNull(v: FormDataEntryValue | null): number | null {
+  if (v == null) return null;
+  const s = String(v).trim().replace(/\./g, "").replace(",", ".");
+  if (s === "") return null;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+}
+
 function parseForm(formData: FormData): ComboInput {
+  const original = parseNumOrNull(formData.get("original_price_cents"));
+  const price = parseNumOrNull(formData.get("price_cents")) ?? 0;
+  const display = parseNumOrNull(formData.get("display_order")) ?? 0;
+
   const result = comboSchema.safeParse({
     name: formData.get("name"),
     slug: formData.get("slug"),
     description: formData.get("description") || null,
     image_url: formData.get("image_url") || null,
-    price_cents: formData.get("price_cents") || 0,
-    original_price_cents: formData.get("original_price_cents") || null,
+    price_cents: price,
+    original_price_cents: original,
     whatsapp_message: formData.get("whatsapp_message"),
-    display_order: formData.get("display_order") || 0,
+    display_order: display,
     active: formData.get("active") === "on" || formData.get("active") === "true",
     featured: formData.get("featured") === "on" || formData.get("featured") === "true",
     badge_text: formData.get("badge_text") || null,
