@@ -6,11 +6,13 @@ import { stepSchema } from "@/lib/validation/step";
 
 export async function createStep(formData: FormData) {
   const { supabase } = await assertAdmin();
+  const rawImage = (formData.get("image_url") as string) ?? "";
   const parsed = stepSchema.parse({
     step_number: formData.get("step_number") || 1,
     title: formData.get("title"),
     description: formData.get("description"),
     icon: formData.get("icon") || null,
+    image_url: rawImage === "" ? null : rawImage,
     display_order: formData.get("display_order") || 0,
     active: formData.get("active") === "on" || formData.get("active") === "true",
   });
@@ -23,11 +25,13 @@ export async function createStep(formData: FormData) {
 
 export async function updateStep(id: string, formData: FormData) {
   const { supabase } = await assertAdmin();
+  const rawImage = (formData.get("image_url") as string) ?? "";
   const parsed = stepSchema.parse({
     step_number: formData.get("step_number") || 1,
     title: formData.get("title"),
     description: formData.get("description"),
     icon: formData.get("icon") || null,
+    image_url: rawImage === "" ? null : rawImage,
     display_order: formData.get("display_order") || 0,
     active: formData.get("active") === "on" || formData.get("active") === "true",
   });
