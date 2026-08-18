@@ -33,7 +33,8 @@ insert into auth.users (
   email_change,
   email_change_token_new,
   recovery_token
-) values (
+)
+select
   '00000000-0000-0000-0000-000000000000',
   gen_random_uuid(),
   'authenticated',
@@ -51,8 +52,9 @@ insert into auth.users (
   '',
   '',
   ''
-)
-on conflict (email) do nothing;
+where not exists (
+  select 1 from auth.users where email = 'admin@exemplo.com'
+);
 
 -- 3. Se voce ja rodou o seed antes com outro email e quer promover este,
 -- descomente:
