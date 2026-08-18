@@ -174,6 +174,11 @@ function ComboDialog({
   const [priceReais, setPriceReais] = useState(
     combo?.price_cents != null ? (combo.price_cents / 100).toFixed(2).replace(".", ",") : ""
   );
+  const [originalReais, setOriginalReais] = useState(
+    combo?.original_price_cents != null
+      ? (combo.original_price_cents / 100).toFixed(2).replace(".", ",")
+      : ""
+  );
   const [imageUrl, setImageUrl] = useState(combo?.image_url ?? "");
 
   const toggle = (id: string) => {
@@ -241,13 +246,20 @@ function ComboDialog({
             <div className="space-y-1">
               <Label>Preço original (opcional)</Label>
               <Input
-                name="original_price_cents"
-                defaultValue={
-                  combo?.original_price_cents != null
-                    ? (combo.original_price_cents / 100).toFixed(2).replace(".", ",")
-                    : ""
-                }
+                value={originalReais}
+                onChange={(e) => setOriginalReais(e.target.value)}
                 placeholder="1999,00"
+              />
+              <input
+                type="hidden"
+                name="original_price_cents"
+                value={
+                  originalReais.trim() === ""
+                    ? ""
+                    : Math.round(
+                        Number(originalReais.replace(/\./g, "").replace(",", ".") || 0) * 100
+                      )
+                }
               />
             </div>
             <div className="space-y-1">
