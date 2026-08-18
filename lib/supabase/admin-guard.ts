@@ -12,7 +12,7 @@ export async function assertAdmin() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/admin/login");
+  if (!user) redirect("/login");
 
   const { data: profile } = await supabase
     .from("profiles")

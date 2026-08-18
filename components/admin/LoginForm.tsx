@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn } from "@/app/admin/login/actions";
+import { signIn } from "@/app/(auth)/login/actions";
 import { toast } from "sonner";
 
 export function LoginForm() {

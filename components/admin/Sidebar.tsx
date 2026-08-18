@@ -15,7 +15,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { signOut } from "@/app/admin/login/actions";
+import { signOut } from "@/app/(auth)/login/actions";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
