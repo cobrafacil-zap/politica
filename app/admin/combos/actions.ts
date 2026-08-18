@@ -4,8 +4,22 @@ import { revalidatePath } from "next/cache";
 import { assertAdmin, revalidateLanding } from "@/lib/supabase/admin-guard";
 import { comboSchema, type ComboInput } from "@/lib/validation/combo";
 
+function parseServiceIds(formData: FormData): string[] {
+  const raw = formData.get("service_ids_json");
+  if (typeof raw === "string" && raw.trim().startsWith("[")) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((v): v is string => typeof v === "string");
+      }
+    } catch {
+      // cai no fallback abaixo
+    }
+  }
+  return formData.getAll("service_ids").map(String);
+}
+
 function parseForm(formData: FormData): ComboInput {
-  const serviceIds = formData.getAll("service_ids").map(String);
   const result = comboSchema.safeParse({
     name: formData.get("name"),
     slug: formData.get("slug"),
@@ -18,7 +32,7 @@ function parseForm(formData: FormData): ComboInput {
     active: formData.get("active") === "on" || formData.get("active") === "true",
     featured: formData.get("featured") === "on" || formData.get("featured") === "true",
     badge_text: formData.get("badge_text") || null,
-    service_ids: serviceIds,
+    service_ids: parseServiceIds(formData),
   });
   if (!result.success) {
     const first = result.error.issues[0];

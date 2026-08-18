@@ -285,19 +285,16 @@ function ComboDialog({
                     checked={selected.has(s.id)}
                     onCheckedChange={() => toggle(s.id)}
                   />
-                  <input
-                    type="checkbox"
-                    name="service_ids"
-                    value={s.id}
-                    checked={selected.has(s.id)}
-                    readOnly
-                    className="sr-only"
-                  />
                   {s.name}
                 </label>
               ))}
             </div>
           </div>
+          <input
+            type="hidden"
+            name="service_ids_json"
+            value={JSON.stringify(Array.from(selected))}
+          />
 
           <div className="grid gap-3 md:grid-cols-3">
             <div className="space-y-1">
