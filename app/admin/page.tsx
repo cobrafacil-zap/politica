@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
 import { Megaphone, Package, Wrench, Image as ImageIcon, Star, HelpCircle, ListOrdered } from "lucide-react";
+import { RevalidateCacheButton } from "@/components/admin/RevalidateCacheButton";
 
 const QUICK = [
   { href: "/admin/servicos", label: "Serviços", icon: Wrench },
@@ -34,9 +35,12 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center gap-2">
-        <Megaphone className="h-6 w-6 text-primary" aria-hidden />
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Megaphone className="h-6 w-6 text-primary" aria-hidden />
+          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+        </div>
+        <RevalidateCacheButton />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
