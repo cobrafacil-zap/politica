@@ -30,18 +30,18 @@ begin
       'Jingle de Apresentação',
       'Vinheta curta para abertura de vídeo de campanha (placeholder — troque pelo mp3 real no admin).',
       'jingles', 'image',
-      capa_jingles, null, 1, true
+      capa_jingles, capa_jingles, 1, true
     ),
     (
       'Spot de Proposta — Saúde',
       'Jingle de 30s para spot de rádio (placeholder — troque pelo mp3 real no admin).',
       'jingles', 'image',
-      capa_jingles, null, 2, true
+      capa_jingles, capa_jingles, 2, true
     ),
     (
       'Vídeo de Apresentação',
       'Vídeo curto de apresentação do candidato (placeholder — troque pelo mp4 real no admin).',
       'videos', 'image',
-      capa_videos, null, 1, true
+      capa_videos, capa_videos, 1, true
     );
 end $$;
