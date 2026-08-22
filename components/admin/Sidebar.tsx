@@ -13,6 +13,7 @@ import {
   Settings,
   LogOut,
   ExternalLink,
+  Layers,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/app/(auth)/login/actions";
@@ -22,6 +23,7 @@ const NAV = [
   { href: "/admin/servicos", label: "Serviços", icon: Wrench },
   { href: "/admin/combos", label: "Combos", icon: Package },
   { href: "/admin/portfolio", label: "Portfólio", icon: ImageIcon },
+  { href: "/admin/modelos", label: "Modelos", icon: Layers },
   { href: "/admin/depoimentos", label: "Depoimentos", icon: Star },
   { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
   { href: "/admin/como-funciona", label: "Como funciona", icon: ListOrdered },

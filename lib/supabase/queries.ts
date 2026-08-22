@@ -90,6 +90,23 @@ export type Step = {
   active: boolean;
 };
 
+export type ModeloCategory = "social_media" | "jingles" | "videos";
+export type ModeloMediaType = "image" | "audio" | "video";
+
+export type Modelo = {
+  id: string;
+  title: string;
+  description: string | null;
+  category: ModeloCategory;
+  media_type: ModeloMediaType;
+  media_url: string;
+  thumbnail_url: string | null;
+  display_order: number;
+  active: boolean;
+};
+
+export type ModelosByCategory = Record<ModeloCategory, Modelo[]>;
+
 export type LandingData = {
   settings: Settings;
   services: Service[];
@@ -155,4 +172,36 @@ export const getLandingData = unstable_cache(
   fetchLandingData,
   ["landing-data"],
   { tags: ["landing"], revalidate: 3600 }
+);
+
+async function fetchModelos(): Promise<ModelosByCategory> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("modelos")
+    .select("*")
+    .eq("active", true)
+    .order("display_order")
+    .order("created_at");
+
+  if (error) throw error;
+
+  const grouped: ModelosByCategory = {
+    social_media: [],
+    jingles: [],
+    videos: [],
+  };
+  for (const m of (data ?? []) as Modelo[]) {
+    grouped[m.category].push(m);
+  }
+  return grouped;
+}
+
+/**
+ * Modelos agrupados por categoria para a página /modelos.
+ * Cache isolado, revalidado pela tag 'modelos' quando admin salvar.
+ */
+export const getModelos = unstable_cache(
+  fetchModelos,
+  ["modelos-by-category"],
+  { tags: ["modelos"], revalidate: 3600 }
 );
