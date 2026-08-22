@@ -153,8 +153,17 @@ type CardProps = {
 };
 
 function ModeloCard({ modelo, onOpenImage }: CardProps) {
-  const cover = modelo.thumbnail_url ?? modelo.media_url;
   const isImage = modelo.media_type === "image";
+  const fallback = isImage
+    ? null
+    : modelo.category === "jingles"
+      ? "/capas/jingles.svg"
+      : modelo.category === "videos"
+        ? "/capas/videos.svg"
+        : null;
+  const [coverSrc, setCoverSrc] = useState<string | null>(
+    modelo.thumbnail_url ?? modelo.media_url ?? fallback
+  );
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border-2 bg-card transition-colors hover:border-primary">
@@ -170,18 +179,20 @@ function ModeloCard({ modelo, onOpenImage }: CardProps) {
       >
         {isImage ? (
           <Image
-            src={cover}
+            src={coverSrc ?? fallback ?? ""}
             alt={modelo.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
+            onError={() => fallback && setCoverSrc(fallback)}
           />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={cover}
+            src={coverSrc ?? fallback ?? ""}
             alt={modelo.title}
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            onError={() => fallback && setCoverSrc(fallback)}
           />
         )}
 
@@ -214,7 +225,7 @@ function ModeloCard({ modelo, onOpenImage }: CardProps) {
           <AudioPlayer src={modelo.media_url} title={modelo.title} />
         )}
         {modelo.media_type === "video" && (
-          <VideoPlayer src={modelo.media_url} poster={cover} />
+          <VideoPlayer src={modelo.media_url} poster={coverSrc ?? "/capas/videos.svg"} />
         )}
       </div>
     </article>
@@ -237,13 +248,17 @@ function AudioPlayer({ src, title }: { src: string; title: string }) {
 }
 
 function VideoPlayer({ src, poster }: { src: string; poster: string }) {
+  const [posterSrc, setPosterSrc] = useState(poster);
   return (
     <video
       controls
       preload="metadata"
       playsInline
-      poster={poster}
+      poster={posterSrc}
       className="w-full rounded-lg border bg-black"
+      onError={() => {
+        if (!posterSrc.endsWith("/capas/videos.svg")) setPosterSrc("/capas/videos.svg");
+      }}
     >
       <source src={src} />
       Seu navegador não suporta vídeo embutido.
