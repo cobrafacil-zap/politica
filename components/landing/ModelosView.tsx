@@ -55,11 +55,11 @@ export function ModelosView({ socialMedia, jingles, videos }: Props) {
             <ImageIcon className="h-3 w-3" /> Modelos prontos
           </span>
           <h1 className="mt-4 font-display text-4xl font-black tracking-tighter md:text-6xl">
-            Mostruário de campanha.
+            O que a gente já fez.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-background/70">
-            Posts para redes, jingles e vídeos prontos para personalizar com o
-            nome e a cara do candidato.
+            Exemplos reais de posts para redes, jingles e vídeos que
+            produzimos para campanhas que confiaram na gente.
           </p>
 
           {/* Abas */}
@@ -226,7 +226,7 @@ function AudioPlayer({ src, title }: { src: string; title: string }) {
     <div className="rounded-lg border bg-background p-3">
       <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted-foreground">
         <Volume2 className="h-4 w-4" />
-        Ouça o jingle
+        Ouça o exemplo
       </div>
       <audio controls preload="metadata" className="w-full" aria-label={title}>
         <source src={src} />

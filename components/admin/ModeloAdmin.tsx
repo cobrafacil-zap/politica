@@ -86,8 +86,8 @@ export function ModeloAdmin({ items }: { items: Modelo[] }) {
         <div>
           <CardTitle>Modelos</CardTitle>
           <CardDescription>
-            Social Media (imagens), Jingles (MP3) e Vídeos (MP4) que aparecem
-            na página /modelos.
+            Exemplos de Social Media (imagens), Jingles (MP3) e Vídeos (MP4)
+            que aparecem na página /modelos como mostruário.
           </CardDescription>
         </div>
         <Button onClick={() => setCreating(true)} size="sm">
@@ -320,7 +320,7 @@ function ModeloDialog({
                 defaultChecked={modelo?.active ?? true}
                 className="h-4 w-4"
               />
-              Ativo (visível na página /modelos)
+              Ativo (visível no mostruário /modelos)
             </label>
           </div>
 
