@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { ImageIcon, Music2, Play } from "lucide-react";
+import {
+  Image as ImageIcon,
+  Music2,
+  Play,
+  X,
+  Volume2,
+} from "lucide-react";
 import type { Modelo, ModeloCategory } from "@/lib/supabase/queries";
 
 type Tab = ModeloCategory | "all";
@@ -22,6 +28,7 @@ type Props = {
 
 export function ModelosView({ socialMedia, jingles, videos }: Props) {
   const [active, setActive] = useState<Tab>("all");
+  const [lightbox, setLightbox] = useState<Modelo | null>(null);
 
   const all: Modelo[] = [...socialMedia, ...jingles, ...videos];
   const visible =
@@ -106,13 +113,16 @@ export function ModelosView({ socialMedia, jingles, videos }: Props) {
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {visible.map((m) => (
                 <li key={m.id}>
-                  <ModeloCard modelo={m} />
+                  <ModeloCard modelo={m} onOpenImage={setLightbox} />
                 </li>
               ))}
             </ul>
           )}
         </div>
       </section>
+
+      {/* Lightbox para imagem */}
+      {lightbox && <Lightbox modelo={lightbox} onClose={() => setLightbox(null)} />}
     </>
   );
 }
@@ -137,13 +147,27 @@ function EmptyState({ category }: { category: Tab }) {
   );
 }
 
-function ModeloCard({ modelo }: { modelo: Modelo }) {
+type CardProps = {
+  modelo: Modelo;
+  onOpenImage: (m: Modelo) => void;
+};
+
+function ModeloCard({ modelo, onOpenImage }: CardProps) {
   const cover = modelo.thumbnail_url ?? modelo.media_url;
   const isImage = modelo.media_type === "image";
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border-2 bg-card transition-colors hover:border-primary">
-      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+      {/* Capa — imagem abre no lightbox */}
+      <button
+        type="button"
+        onClick={() => isImage && onOpenImage(modelo)}
+        className={
+          "relative aspect-[4/3] overflow-hidden bg-muted text-left " +
+          (isImage ? "cursor-zoom-in" : "")
+        }
+        aria-label={isImage ? `Ampliar ${modelo.title}` : undefined}
+      >
         {isImage ? (
           <Image
             src={cover}
@@ -162,7 +186,7 @@ function ModeloCard({ modelo }: { modelo: Modelo }) {
         )}
 
         {!isImage && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
             <span className="flex h-14 w-14 items-center justify-center rounded-full bg-background/90 text-foreground shadow-lg">
               {modelo.media_type === "audio" ? (
                 <Music2 className="h-6 w-6" />
@@ -176,7 +200,7 @@ function ModeloCard({ modelo }: { modelo: Modelo }) {
         <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary-foreground">
           {labelFor(modelo.category)}
         </span>
-      </div>
+      </button>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <h3 className="font-display text-lg font-bold leading-tight">
@@ -187,17 +211,105 @@ function ModeloCard({ modelo }: { modelo: Modelo }) {
         )}
 
         {modelo.media_type === "audio" && (
-          <audio controls preload="none" className="w-full">
-            <source src={modelo.media_url} />
-          </audio>
+          <AudioPlayer src={modelo.media_url} title={modelo.title} />
         )}
         {modelo.media_type === "video" && (
-          <video controls preload="none" className="w-full rounded-md">
-            <source src={modelo.media_url} />
-          </video>
+          <VideoPlayer src={modelo.media_url} poster={cover} />
         )}
       </div>
     </article>
+  );
+}
+
+function AudioPlayer({ src, title }: { src: string; title: string }) {
+  return (
+    <div className="rounded-lg border bg-background p-3">
+      <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted-foreground">
+        <Volume2 className="h-4 w-4" />
+        Ouça o jingle
+      </div>
+      <audio controls preload="metadata" className="w-full" aria-label={title}>
+        <source src={src} />
+        Seu navegador não suporta áudio embutido.
+      </audio>
+    </div>
+  );
+}
+
+function VideoPlayer({ src, poster }: { src: string; poster: string }) {
+  return (
+    <video
+      controls
+      preload="metadata"
+      playsInline
+      poster={poster}
+      className="w-full rounded-lg border bg-black"
+    >
+      <source src={src} />
+      Seu navegador não suporta vídeo embutido.
+    </video>
+  );
+}
+
+function Lightbox({
+  modelo,
+  onClose,
+}: {
+  modelo: Modelo;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={modelo.title}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Fechar"
+        className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 text-foreground shadow-lg hover:bg-background"
+      >
+        <X className="h-5 w-5" />
+      </button>
+
+      <div
+        className="relative flex max-h-[90vh] w-full max-w-5xl flex-col items-center gap-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="relative flex max-h-[80vh] w-full items-center justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={modelo.media_url}
+            alt={modelo.title}
+            className="max-h-[80vh] w-auto max-w-full rounded-lg object-contain shadow-2xl"
+          />
+        </div>
+        <div className="text-center text-background">
+          <p className="font-display text-lg font-bold">{modelo.title}</p>
+          {modelo.description && (
+            <p className="mt-1 text-sm text-background/70">
+              {modelo.description}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
