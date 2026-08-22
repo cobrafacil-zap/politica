@@ -162,15 +162,19 @@ type CardProps = {
 };
 
 function ModeloCard({ modelo, onOpen }: CardProps) {
-  const fallback =
+  // Capas SVG locais ficam como capa padrão de jingles/vídeos.
+  // Social Media usa o thumbnail_url (ou media_url) real do banco.
+  const localCover =
     modelo.category === "jingles"
       ? "/capas/jingles.svg"
       : modelo.category === "videos"
         ? "/capas/videos.svg"
         : null;
-  const [coverSrc, setCoverSrc] = useState<string | null>(
-    modelo.thumbnail_url ?? modelo.media_url ?? fallback
-  );
+  const initialCover =
+    modelo.media_type === "image"
+      ? modelo.thumbnail_url ?? modelo.media_url
+      : localCover;
+  const [coverSrc, setCoverSrc] = useState<string | null>(initialCover);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border-2 bg-card transition-colors hover:border-primary">
@@ -178,7 +182,7 @@ function ModeloCard({ modelo, onOpen }: CardProps) {
       <button
         type="button"
         onClick={() => onOpen(modelo)}
-        className="relative aspect-[4/3] cursor-zoom-in overflow-hidden bg-muted text-left"
+        className="relative aspect-[4/3] cursor-zoom-in overflow-hidden bg-foreground text-left"
         aria-label={`Abrir ${modelo.title}`}
       >
         {modelo.media_type === "image" ? (
@@ -188,15 +192,15 @@ function ModeloCard({ modelo, onOpen }: CardProps) {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
-            onError={() => fallback && setCoverSrc(fallback)}
+            onError={() => localCover && setCoverSrc(localCover)}
           />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={coverSrc ?? ""}
+            src={coverSrc ?? localCover ?? ""}
             alt={modelo.title}
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-            onError={() => fallback && setCoverSrc(fallback)}
+            onError={() => localCover && setCoverSrc(localCover)}
           />
         )}
 
