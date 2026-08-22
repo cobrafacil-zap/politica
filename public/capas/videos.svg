@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="65%">
+      <stop offset="0%" stop-color="#1FA855" stop-opacity="0.55"/>
+      <stop offset="45%" stop-color="#0F1216" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#0F1216"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1FA855"/>
+      <stop offset="100%" stop-color="#FFD60A"/>
+    </linearGradient>
+    <linearGradient id="text" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#A7F3D0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Fundo -->
+  <rect width="1080" height="1080" fill="#0F1216"/>
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+
+  <!-- Aro de play ao centro (atrás do texto) -->
+  <g transform="translate(540 540)" opacity="0.85" filter="url(#glow)">
+    <circle r="320" fill="none" stroke="url(#ring)" stroke-width="18"/>
+    <circle r="240" fill="none" stroke="#1FA855" stroke-width="4" opacity="0.6"/>
+    <polygon points="-70,-110 150,0 -70,110" fill="#FFD60A"/>
+  </g>
+
+  <!-- Ondas em arco -->
+  <g stroke="#1FA855" stroke-width="6" fill="none" opacity="0.45">
+    <path d="M 120 540 Q 540 380 960 540"/>
+    <path d="M 120 540 Q 540 700 960 540"/>
+  </g>
+
+  <!-- Texto principal -->
+  <g text-anchor="middle" font-family="Inter, Montserrat, Arial Black, sans-serif" font-weight="900">
+    <text x="540" y="900"
+          font-size="160"
+      fill="url(#text)"
+      stroke="#0F1216"
+      stroke-width="6"
+      paint-order="stroke"
+      letter-spacing="6"
+      filter="url(#glow)">VÍDEOS</text>
+
+    <text x="540" y="970"
+          font-size="36"
+      fill="#A7F3D0"
+      letter-spacing="14">DE CAMPANHA</text>
+  </g>
+
+  <!-- Selo superior -->
+  <g transform="translate(540 110)" text-anchor="middle">
+    <rect x="-180" y="-32" width="360" height="64" rx="32"
+          fill="#1FA855"/>
+    <text font-family="Inter, Arial, sans-serif" font-weight="700"
+          font-size="26" fill="#0F1216" letter-spacing="3">
+      EXEMPLOS REAIS
+    </text>
+  </g>
+</svg>

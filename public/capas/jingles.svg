@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="65%">
+      <stop offset="0%" stop-color="#1FA855" stop-opacity="0.55"/>
+      <stop offset="45%" stop-color="#0F1216" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#0F1216"/>
+    </radialGradient>
+    <linearGradient id="wave" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1FA855"/>
+      <stop offset="100%" stop-color="#FFD60A"/>
+    </linearGradient>
+    <linearGradient id="text" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#A7F3D0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Fundo -->
+  <rect width="1080" height="1080" fill="#0F1216"/>
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+
+  <!-- Ondas sonoras atrás do texto -->
+  <g stroke="url(#wave)" stroke-width="6" fill="none" opacity="0.55">
+    <circle cx="540" cy="540" r="220"/>
+    <circle cx="540" cy="540" r="290"/>
+    <circle cx="540" cy="540" r="360"/>
+    <circle cx="540" cy="540" r="430"/>
+  </g>
+
+  <!-- Megafone estilizado atrás do texto -->
+  <g transform="translate(540 540)" opacity="0.85" filter="url(#glow)">
+    <!-- corpo -->
+    <path d="M -120 -50 L 60 -130 L 60 130 L -120 50 Z" fill="#1FA855"/>
+    <!-- boca -->
+    <rect x="60" y="-90" width="80" height="180" rx="14" fill="#FFD60A"/>
+    <!-- detalhe -->
+    <circle cx="-90" cy="0" r="22" fill="#0F1216" stroke="#FFD60A" stroke-width="4"/>
+  </g>
+
+  <!-- Texto principal centralizado -->
+  <g text-anchor="middle" font-family="Inter, Montserrat, Arial Black, sans-serif" font-weight="900">
+    <text x="540" y="560"
+          font-size="180"
+      fill="url(#text)"
+      stroke="#0F1216"
+      stroke-width="6"
+      paint-order="stroke"
+      letter-spacing="6"
+      filter="url(#glow)">JINGLES</text>
+
+    <text x="540" y="660"
+          font-size="42"
+      fill="#A7F3D0"
+      letter-spacing="14">DE CAMPANHA</text>
+  </g>
+
+  <!-- Selo canto inferior -->
+  <g transform="translate(540 980)" text-anchor="middle">
+    <rect x="-180" y="-32" width="360" height="64" rx="32"
+          fill="#1FA855"/>
+    <text font-family="Inter, Arial, sans-serif" font-weight="700"
+          font-size="26" fill="#0F1216" letter-spacing="3">
+      EXEMPLOS REAIS
+    </text>
+  </g>
+</svg>

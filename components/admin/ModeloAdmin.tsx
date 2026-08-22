@@ -291,12 +291,18 @@ function ModeloDialog({
           <input type="hidden" name="media_url" value={mediaUrl} />
 
           {mediaType !== "image" && (
-            <ImageUploadField
-              label="Capa (opcional — thumbnail)"
-              kind="image"
-              value={thumbnailUrl}
-              onChange={setThumbnailUrl}
-            />
+            <div className="space-y-1">
+              <ImageUploadField
+                label="Capa do card (thumbnail)"
+                kind="image"
+                value={thumbnailUrl}
+                onChange={setThumbnailUrl}
+              />
+              <p className="text-xs text-muted-foreground">
+                Essa imagem aparece no card da página /modelos e como
+                capa antes do play no vídeo. Recomendado 1080×1080.
+              </p>
+            </div>
           )}
           <input
             type="hidden"
