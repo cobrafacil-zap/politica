@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import {
-  Image as ImageIcon,
-  Music2,
-  Play,
-  X,
-  Volume2,
-} from "lucide-react";
+import { Image as ImageIcon, Music2, Play, X } from "lucide-react";
 import type { Modelo, ModeloCategory } from "@/lib/supabase/queries";
 
 type Tab = ModeloCategory | "all";
@@ -24,6 +18,21 @@ type Props = {
   socialMedia: Modelo[];
   jingles: Modelo[];
   videos: Modelo[];
+};
+
+// Cor da etiqueta por categoria.
+// Mantém o amarelo pra jingle (combina com o megafone da capa) e
+// azul pra vídeo (contraste forte com o verde do site).
+const CATEGORY_LABEL_CLASS: Record<ModeloCategory, string> = {
+  social_media: "bg-primary text-primary-foreground",
+  jingles: "bg-amber-400 text-amber-950",
+  videos: "bg-sky-500 text-white",
+};
+
+const CATEGORY_LABEL_TEXT: Record<ModeloCategory, string> = {
+  social_media: "Social Media",
+  jingles: "Jingle",
+  videos: "Vídeo",
 };
 
 export function ModelosView({ socialMedia, jingles, videos }: Props) {
@@ -113,7 +122,7 @@ export function ModelosView({ socialMedia, jingles, videos }: Props) {
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {visible.map((m) => (
                 <li key={m.id}>
-                  <ModeloCard modelo={m} onOpenImage={setLightbox} />
+                  <ModeloCard modelo={m} onOpen={setLightbox} />
                 </li>
               ))}
             </ul>
@@ -121,7 +130,7 @@ export function ModelosView({ socialMedia, jingles, videos }: Props) {
         </div>
       </section>
 
-      {/* Lightbox para imagem */}
+      {/* Lightbox unificado: imagem / áudio / vídeo */}
       {lightbox && <Lightbox modelo={lightbox} onClose={() => setLightbox(null)} />}
     </>
   );
@@ -149,14 +158,12 @@ function EmptyState({ category }: { category: Tab }) {
 
 type CardProps = {
   modelo: Modelo;
-  onOpenImage: (m: Modelo) => void;
+  onOpen: (m: Modelo) => void;
 };
 
-function ModeloCard({ modelo, onOpenImage }: CardProps) {
-  const isImage = modelo.media_type === "image";
-  const fallback = isImage
-    ? null
-    : modelo.category === "jingles"
+function ModeloCard({ modelo, onOpen }: CardProps) {
+  const fallback =
+    modelo.category === "jingles"
       ? "/capas/jingles.svg"
       : modelo.category === "videos"
         ? "/capas/videos.svg"
@@ -167,19 +174,16 @@ function ModeloCard({ modelo, onOpenImage }: CardProps) {
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border-2 bg-card transition-colors hover:border-primary">
-      {/* Capa — imagem abre no lightbox */}
+      {/* Capa — clique abre lightbox (imagem, áudio ou vídeo) */}
       <button
         type="button"
-        onClick={() => isImage && onOpenImage(modelo)}
-        className={
-          "relative aspect-[4/3] overflow-hidden bg-muted text-left " +
-          (isImage ? "cursor-zoom-in" : "")
-        }
-        aria-label={isImage ? `Ampliar ${modelo.title}` : undefined}
+        onClick={() => onOpen(modelo)}
+        className="relative aspect-[4/3] cursor-zoom-in overflow-hidden bg-muted text-left"
+        aria-label={`Abrir ${modelo.title}`}
       >
-        {isImage ? (
+        {modelo.media_type === "image" ? (
           <Image
-            src={coverSrc ?? fallback ?? ""}
+            src={coverSrc ?? ""}
             alt={modelo.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -189,16 +193,17 @@ function ModeloCard({ modelo, onOpenImage }: CardProps) {
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={coverSrc ?? fallback ?? ""}
+            src={coverSrc ?? ""}
             alt={modelo.title}
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             onError={() => fallback && setCoverSrc(fallback)}
           />
         )}
 
-        {!isImage && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-background/90 text-foreground shadow-lg">
+        {/* Botão play no centro pra áudio/vídeo */}
+        {modelo.media_type !== "image" && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity group-hover:bg-black/50">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-background/90 text-foreground shadow-lg transition-transform group-hover:scale-110">
               {modelo.media_type === "audio" ? (
                 <Music2 className="h-6 w-6" />
               ) : (
@@ -208,8 +213,13 @@ function ModeloCard({ modelo, onOpenImage }: CardProps) {
           </div>
         )}
 
-        <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary-foreground">
-          {labelFor(modelo.category)}
+        <span
+          className={
+            "absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider " +
+            CATEGORY_LABEL_CLASS[modelo.category]
+          }
+        >
+          {CATEGORY_LABEL_TEXT[modelo.category]}
         </span>
       </button>
 
@@ -220,49 +230,8 @@ function ModeloCard({ modelo, onOpenImage }: CardProps) {
         {modelo.description && (
           <p className="text-sm text-muted-foreground">{modelo.description}</p>
         )}
-
-        {modelo.media_type === "audio" && (
-          <AudioPlayer src={modelo.media_url} title={modelo.title} />
-        )}
-        {modelo.media_type === "video" && (
-          <VideoPlayer src={modelo.media_url} poster={coverSrc ?? "/capas/videos.svg"} />
-        )}
       </div>
     </article>
-  );
-}
-
-function AudioPlayer({ src, title }: { src: string; title: string }) {
-  return (
-    <div className="rounded-lg border bg-background p-3">
-      <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted-foreground">
-        <Volume2 className="h-4 w-4" />
-        Ouça o exemplo
-      </div>
-      <audio controls preload="metadata" className="w-full" aria-label={title}>
-        <source src={src} />
-        Seu navegador não suporta áudio embutido.
-      </audio>
-    </div>
-  );
-}
-
-function VideoPlayer({ src, poster }: { src: string; poster: string }) {
-  const [posterSrc, setPosterSrc] = useState(poster);
-  return (
-    <video
-      controls
-      preload="metadata"
-      playsInline
-      poster={posterSrc}
-      className="w-full rounded-lg border bg-black"
-      onError={() => {
-        if (!posterSrc.endsWith("/capas/videos.svg")) setPosterSrc("/capas/videos.svg");
-      }}
-    >
-      <source src={src} />
-      Seu navegador não suporta vídeo embutido.
-    </video>
   );
 }
 
@@ -307,29 +276,62 @@ function Lightbox({
         className="relative flex max-h-[90vh] w-full max-w-5xl flex-col items-center gap-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative flex max-h-[80vh] w-full items-center justify-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={modelo.media_url}
-            alt={modelo.title}
-            className="max-h-[80vh] w-auto max-w-full rounded-lg object-contain shadow-2xl"
-          />
-        </div>
+        {modelo.media_type === "image" && (
+          <div className="relative flex max-h-[80vh] w-full items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={modelo.media_url}
+              alt={modelo.title}
+              className="max-h-[80vh] w-auto max-w-full rounded-lg object-contain shadow-2xl"
+            />
+          </div>
+        )}
+
+        {modelo.media_type === "audio" && (
+          <div className="w-full max-w-xl rounded-2xl bg-background p-8 shadow-2xl">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={modelo.thumbnail_url ?? "/capas/jingles.svg"}
+              alt=""
+              className="mb-6 aspect-square w-full rounded-xl object-cover"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = "/capas/jingles.svg";
+              }}
+            />
+            <audio
+              controls
+              autoPlay
+              preload="metadata"
+              className="w-full"
+              aria-label={modelo.title}
+            >
+              <source src={modelo.media_url} />
+              Seu navegador não suporta áudio embutido.
+            </audio>
+          </div>
+        )}
+
+        {modelo.media_type === "video" && (
+          <video
+            controls
+            autoPlay
+            preload="metadata"
+            playsInline
+            poster={modelo.thumbnail_url ?? "/capas/videos.svg"}
+            className="max-h-[80vh] w-full rounded-lg bg-black shadow-2xl"
+          >
+            <source src={modelo.media_url} />
+            Seu navegador não suporta vídeo embutido.
+          </video>
+        )}
+
         <div className="text-center text-background">
           <p className="font-display text-lg font-bold">{modelo.title}</p>
           {modelo.description && (
-            <p className="mt-1 text-sm text-background/70">
-              {modelo.description}
-            </p>
+            <p className="mt-1 text-sm text-background/70">{modelo.description}</p>
           )}
         </div>
       </div>
     </div>
   );
-}
-
-function labelFor(category: ModeloCategory): string {
-  if (category === "social_media") return "Social Media";
-  if (category === "jingles") return "Jingle";
-  return "Vídeo";
 }
